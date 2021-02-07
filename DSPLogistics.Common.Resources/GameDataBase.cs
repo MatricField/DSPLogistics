@@ -1,4 +1,5 @@
-﻿using DSPLogistics.Common.Resources.DSPObjectModel;
+﻿using DSPLogistics.Common.Model;
+using DSPLogistics.Common.Resources.DSPObjectModel;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,14 +31,56 @@ namespace DSPLogistics.Common.Resources
                     .FetchAssets()
                     .Where(assest => assest.ClassID == ClassIDType.MonoBehaviour)
                     .Cast<MonoBehaviour>();
-                var itemProtoSet = assests.Where(obj => obj.Name == ItemProtoSetName).FirstOrDefault();
-                var itemList = MapProperties<ProtoSet<ItemProto>>(itemProtoSet.Structure);
+                MonoBehaviour itemProtoSet = assests.Where(obj => obj.Name == ItemProtoSetName).FirstOrDefault() ?? throw new NotSupportedException();
+                ProtoSet<ItemProto> itemList = MapProperties<ProtoSet<ItemProto>>(itemProtoSet.Structure);
                 ItemSet = itemList.dataArray;
-                var recipeProtoSet = assests.Where(obj => obj.Name == RecipeProtoSetName).FirstOrDefault();
-                var recipeList = MapProperties<ProtoSet<RecipeProto>>(recipeProtoSet.Structure);
+                MonoBehaviour recipeProtoSet = assests.Where(obj => obj.Name == RecipeProtoSetName).FirstOrDefault() ?? throw new NotSupportedException();
+                ProtoSet<RecipeProto> recipeList = MapProperties<ProtoSet<RecipeProto>>(recipeProtoSet.Structure);
                 RecipeSet = recipeList.dataArray;
             }
 
+        }
+
+        public void SaveTo(DSPLogisticsDbContext logisticsDb)
+        {
+            foreach (var itemProto in ItemSet)
+            {
+                logisticsDb.Add(new Item(itemProto.ID, itemProto.Name, itemProto.IconPath, itemProto.GridIndex, itemProto.Description));
+            }
+
+            logisticsDb.SaveChanges();
+
+            foreach (var recipeProto in RecipeSet)
+            {
+                var inputs =
+                    Enumerable
+                    .Zip(recipeProto.Items, recipeProto.ItemCounts)
+                    .Select(input => new RecipeInput(logisticsDb.Items.Where(x => x.ID == input.First).Single(), input.Second))
+                    .ToList();
+
+                var outputs =
+                    Enumerable
+                    .Zip(recipeProto.Results, recipeProto.ResultCounts)
+                    .Select(input => new RecipeOutput(logisticsDb.Items.Where(x => x.ID == input.First).Single(), input.Second))
+                    .ToList();
+
+                logisticsDb.Add(
+                    new Recipe(recipeProto.ID, recipeProto.Name, recipeProto.TimeSpend, inputs, outputs, recipeProto.IconPath, recipeProto.GridIndex, recipeProto.Description));
+            }
+            logisticsDb.SaveChanges();
+
+        }
+
+        public static GameDataBase Load(string GameBasePath)
+        {
+            if (Directory.Exists(GameBasePath))
+            {
+                return new GameDataBase(GameBasePath);
+            }
+            else
+            {
+                throw new DirectoryNotFoundException();
+            }
         }
 
         private static T MapProperties<T>(SerializableStructure from)
@@ -47,11 +90,7 @@ namespace DSPLogistics.Common.Resources
 
         private static object MapProperties(SerializableStructure from, Type tTo)
         {
-            if (null == from)
-            {
-                return null;
-            }
-            var to = Activator.CreateInstance(tTo);
+            var to = Activator.CreateInstance(tTo) ?? throw new NotSupportedException();
             DoMapping(from.Type);
             return to;
 
@@ -92,7 +131,7 @@ namespace DSPLogistics.Common.Resources
             }
         }
 
-        static object ConvertComplexType(SerializableField fieldVal, Type type, bool isArray)
+        private static object ConvertComplexType(SerializableField fieldVal, Type type, bool isArray)
         {
             try
             {
@@ -100,7 +139,7 @@ namespace DSPLogistics.Common.Resources
                 {
                     var elmType = type.GetGenericArguments()[0];
                     var arrType = typeof(List<>).MakeGenericType(elmType);
-                    var ret = Activator.CreateInstance(arrType) as IList;
+                    var ret = Activator.CreateInstance(arrType) as IList ?? throw new ArgumentException();
                     foreach (SerializableStructure record in (IAsset[])fieldVal.CValue)
                     {
                         var item = MapProperties(record, elmType);
@@ -119,7 +158,7 @@ namespace DSPLogistics.Common.Resources
             }
         }
 
-        static object ConvertType(SerializableField fieldVal, in SerializableType.Field field)
+        private static object ConvertType(SerializableField fieldVal, in SerializableType.Field field)
         {
             if (field.IsArray)
             {
@@ -189,18 +228,6 @@ namespace DSPLogistics.Common.Resources
                     default:
                         throw new NotSupportedException(field.Type.Type.ToString());
                 }
-            }
-        }
-
-        public static GameDataBase Load(string GameBasePath)
-        {
-            if (Directory.Exists(GameBasePath))
-            {
-                return new GameDataBase(GameBasePath);
-            }
-            else
-            {
-                throw new DirectoryNotFoundException();
             }
         }
     }

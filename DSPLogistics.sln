@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSPLogistics.Common.Resourc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uTinyRipperCore", "UtinyRipper\uTinyRipperCore\uTinyRipperCore.csproj", "{665442AC-448D-432C-B6B3-42A84851989F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSPLogistics.Common.Win", "DSPLogistics.Common.Win\DSPLogistics.Common.Win.csproj", "{47EB422F-0906-4097-A2D0-64C0F18F6A5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSPLogistics.Common", "DSPLogistics.Common\DSPLogistics.Common.csproj", "{4962BCAB-E1B7-4D55-B82E-E24717ACED06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSPLogistics.Console.Win", "DSPLogistics.Console.Win\DSPLogistics.Console.Win.csproj", "{BDD10EFB-FCF1-4A90-BD68-FD2DBADC3F46}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSPLogistics.Win.ConsoleApp", "DSPLogistics.Win.Console\DSPLogistics.Win.ConsoleApp.csproj", "{BC05DE61-5ECB-4C05-8D3C-473A50E558A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,18 +30,18 @@ Global
 		{665442AC-448D-432C-B6B3-42A84851989F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{665442AC-448D-432C-B6B3-42A84851989F}.Virtual|Any CPU.ActiveCfg = Virtual|Any CPU
 		{665442AC-448D-432C-B6B3-42A84851989F}.Virtual|Any CPU.Build.0 = Virtual|Any CPU
-		{47EB422F-0906-4097-A2D0-64C0F18F6A5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{47EB422F-0906-4097-A2D0-64C0F18F6A5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{47EB422F-0906-4097-A2D0-64C0F18F6A5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{47EB422F-0906-4097-A2D0-64C0F18F6A5E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{47EB422F-0906-4097-A2D0-64C0F18F6A5E}.Virtual|Any CPU.ActiveCfg = Debug|Any CPU
-		{47EB422F-0906-4097-A2D0-64C0F18F6A5E}.Virtual|Any CPU.Build.0 = Debug|Any CPU
-		{BDD10EFB-FCF1-4A90-BD68-FD2DBADC3F46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BDD10EFB-FCF1-4A90-BD68-FD2DBADC3F46}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BDD10EFB-FCF1-4A90-BD68-FD2DBADC3F46}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BDD10EFB-FCF1-4A90-BD68-FD2DBADC3F46}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BDD10EFB-FCF1-4A90-BD68-FD2DBADC3F46}.Virtual|Any CPU.ActiveCfg = Debug|Any CPU
-		{BDD10EFB-FCF1-4A90-BD68-FD2DBADC3F46}.Virtual|Any CPU.Build.0 = Debug|Any CPU
+		{4962BCAB-E1B7-4D55-B82E-E24717ACED06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4962BCAB-E1B7-4D55-B82E-E24717ACED06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4962BCAB-E1B7-4D55-B82E-E24717ACED06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4962BCAB-E1B7-4D55-B82E-E24717ACED06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4962BCAB-E1B7-4D55-B82E-E24717ACED06}.Virtual|Any CPU.ActiveCfg = Debug|Any CPU
+		{4962BCAB-E1B7-4D55-B82E-E24717ACED06}.Virtual|Any CPU.Build.0 = Debug|Any CPU
+		{BC05DE61-5ECB-4C05-8D3C-473A50E558A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC05DE61-5ECB-4C05-8D3C-473A50E558A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC05DE61-5ECB-4C05-8D3C-473A50E558A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC05DE61-5ECB-4C05-8D3C-473A50E558A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC05DE61-5ECB-4C05-8D3C-473A50E558A8}.Virtual|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC05DE61-5ECB-4C05-8D3C-473A50E558A8}.Virtual|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

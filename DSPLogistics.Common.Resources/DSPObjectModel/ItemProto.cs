@@ -1,5 +1,7 @@
-﻿using System;
+﻿using DSPLogistics.Common.Model;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace DSPLogistics.Common.Resources.DSPObjectModel
@@ -8,9 +10,9 @@ namespace DSPLogistics.Common.Resources.DSPObjectModel
     {
 		public EItemType Type { get; set; }
 
-		public string MiningFrom { get; set; }
+		public string MiningFrom { get; set; } = "";
 
-		public string ProduceFrom { get; set; }
+		public string ProduceFrom { get; set; } = "";
 
 		public int StackSize { get; set; }
 
@@ -22,7 +24,7 @@ namespace DSPLogistics.Common.Resources.DSPObjectModel
 
 		public bool BuildInGas { get; set; }
 
-		public string IconPath { get; set; }
+		public string IconPath { get; set; } = "";
 
 		public int ModelIndex { get; set; }
 
@@ -50,8 +52,8 @@ namespace DSPLogistics.Common.Resources.DSPObjectModel
 
 		public int PreTechOverride { get; set; }
 
-		public int[] DescFields { get; set; }
+		public int[] DescFields { get; set; } = Array.Empty<int>();
 
-		public string Description { get; set; }
+		public string Description { get; set; } = "";
 	}
 }
