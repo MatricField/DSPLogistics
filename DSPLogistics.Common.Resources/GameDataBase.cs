@@ -14,12 +14,11 @@ namespace DSPLogistics.Common.Resources
 {
     public class GameDataBase
     {
-        private const string ItemProtoSetName = "ItemProtoSet";
-        private const string RecipeProtoSetName = "RecipeProtoSet";
-
         public IReadOnlyList<ItemProto> ItemSet { get; }
 
         public IReadOnlyList<RecipeProto> RecipeSet { get; }
+
+        public IReadOnlyList<StringProto> StringSet { get; }
 
         protected GameDataBase(string GameBasePath)
         {
@@ -30,22 +29,41 @@ namespace DSPLogistics.Common.Resources
                     .FileCollection
                     .FetchAssets()
                     .Where(assest => assest.ClassID == ClassIDType.MonoBehaviour)
-                    .Cast<MonoBehaviour>();
-                MonoBehaviour itemProtoSet = assests.Where(obj => obj.Name == ItemProtoSetName).FirstOrDefault() ?? throw new NotSupportedException();
-                ProtoSet<ItemProto> itemList = MapProperties<ProtoSet<ItemProto>>(itemProtoSet.Structure);
-                ItemSet = itemList.dataArray;
-                MonoBehaviour recipeProtoSet = assests.Where(obj => obj.Name == RecipeProtoSetName).FirstOrDefault() ?? throw new NotSupportedException();
-                ProtoSet<RecipeProto> recipeList = MapProperties<ProtoSet<RecipeProto>>(recipeProtoSet.Structure);
-                RecipeSet = recipeList.dataArray;
+                    .Cast<MonoBehaviour>() ?? throw new InvalidDataException();
+
+                ItemSet = GetProtoList<ItemProto>(assests);
+                RecipeSet = GetProtoList<RecipeProto>(assests);
+                StringSet = GetProtoList<StringProto>(assests);
             }
 
+        }
+        private static IReadOnlyList<T> GetProtoList<T>(IEnumerable<MonoBehaviour> assets)
+            where T : Proto
+        {
+            var protoSetName = typeof(T).Name + "Set";
+            var protoSet = assets.Where(obj => obj.Name == protoSetName).Single();
+            var itemList = MapProperties<ProtoSet<T>>(protoSet.Structure);
+            return itemList.dataArray;
         }
 
         public void SaveTo(DSPLogisticsDbContext logisticsDb)
         {
+            foreach(var strProto in StringSet)
+            {
+                logisticsDb.LocalizedStrings.Add(new LocalizedString(strProto.Name, strProto.ZHCN, strProto.ENUS, strProto.FRFR));
+            }
+
+            logisticsDb.SaveChanges();
+
             foreach (var itemProto in ItemSet)
             {
-                logisticsDb.Add(new Item(itemProto.ID, itemProto.Name, itemProto.IconPath, itemProto.GridIndex, itemProto.Description));
+                logisticsDb.Add(
+                    new Item(
+                        itemProto.ID,
+                        logisticsDb.LocalizedStrings.Where(x => x.Name == itemProto.Name).Single(),
+                        itemProto.IconPath,
+                        itemProto.GridIndex,
+                        logisticsDb.LocalizedStrings.Where(x => x.Name == itemProto.Description).Single()));
             }
 
             logisticsDb.SaveChanges();
@@ -65,7 +83,12 @@ namespace DSPLogistics.Common.Resources
                     .ToList();
 
                 logisticsDb.Add(
-                    new Recipe(recipeProto.ID, recipeProto.Name, recipeProto.TimeSpend, inputs, outputs, recipeProto.IconPath, recipeProto.GridIndex, recipeProto.Description));
+                    new Recipe(
+                        recipeProto.ID,
+                        logisticsDb.LocalizedStrings.Where(x => x.Name == recipeProto.Name).Single(),
+                        recipeProto.TimeSpend,
+                        inputs, 
+                        outputs));
             }
             logisticsDb.SaveChanges();
 

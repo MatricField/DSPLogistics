@@ -1,28 +1,21 @@
 ﻿using DSPLogistics.Common.Model;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DSPLogistics.Common
 {
     public class DSPLogisticsDbContext : DbContext
     {
-        private DbSet<Item>? items;
-        private DbSet<Recipe>? recipes;
-        private DbSet<RecipeInput>? recipeInputs;
-        private DbSet<RecipeOutput>? recipeOutputs;
+        public DbSet<Item> Items { get; set; }
 
-        public DbSet<Item> Items { get => items ?? throw new InvalidOperationException(); set => items = value; }
+        public DbSet<Recipe> Recipes { get; set; }
 
-        public DbSet<Recipe> Recipes { get => recipes ?? throw new InvalidOperationException(); set => recipes = value; }
+        public DbSet<RecipeInput> RecipeInputs { get; set; }
 
-        public DbSet<RecipeInput> RecipeInputs { get => recipeInputs ?? throw new InvalidOperationException(); set => recipeInputs = value; }
+        public DbSet<RecipeOutput> RecipeOutputs { get; set; }
 
-        public DbSet<RecipeOutput> RecipeOutputs { get => recipeOutputs ?? throw new InvalidOperationException(); set => recipeOutputs = value; }
+        public DbSet<LocalizedString> LocalizedStrings { get; set; }
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public DSPLogisticsDbContext() :
             base()
         {
@@ -44,5 +37,6 @@ namespace DSPLogistics.Common
         {
             Database.EnsureCreated();
         }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     }
 }
