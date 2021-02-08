@@ -1,30 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace DSPLogistics.Common.Model
 {
-    public record Item
+    public class Item
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Required, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int ID { get; init; }
 
-        public string Name { get; init; }
+        [Required]
+        public string NameID { get; init; }
 
+        public LocalizedString? Name { get; set; }
+
+        [Required]
         public string IconPath { get; init; }
 
+        [Required]
         public int GridIndex { get; init; }
 
-        public string Description { get; init; }
+        [Required]
+        public string DescriptionID { get; init; }
 
-        public Item(int iD, string name, string iconPath, int gridIndex, string description)
+        public LocalizedString? Description { get; set; }
+
+        public Item(int iD, LocalizedString name, string iconPath, int gridIndex, LocalizedString description)
         {
             ID = iD;
+            NameID = name.Name;
             Name = name;
             IconPath = iconPath;
             GridIndex = gridIndex;
+            DescriptionID = description.Name;
             Description = description;
+        }
+
+        public Item(int iD, string nameID, string iconPath, int gridIndex, string descriptionID)
+        {
+            ID = iD;
+            NameID = nameID;
+            IconPath = iconPath;
+            GridIndex = gridIndex;
+            DescriptionID = descriptionID;
         }
     }
 }

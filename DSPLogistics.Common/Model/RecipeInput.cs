@@ -1,21 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace DSPLogistics.Common.Model
 {
-    public record RecipeInput
+    [Index(nameof(ItemId))]
+    public class RecipeInput
     {
+        [Required]
         public int ID { get; init; }
 
-        public Item Item { get; init; }
+        [Required]
+        public int RecipeId { get; init; }
 
+        [Required]
+        public int ItemId { get; init; }
+
+        [Required]
+        public Item? Item { get; set; }
+
+        [Required]
         public int Count { get; init; }
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        internal RecipeInput()
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        public RecipeInput(int iD, int recipeId, int itemId, int count)
         {
+            ID = iD;
+            RecipeId = recipeId;
+            ItemId = itemId;
+            Count = count;
         }
 
         public RecipeInput(Item item, int count)

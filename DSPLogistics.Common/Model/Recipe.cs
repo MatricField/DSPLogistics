@@ -1,47 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DSPLogistics.Common.Model
 {
-    public record Recipe
+    public class Recipe
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Required, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int ID { get; init; }
 
-        public string Name { get; init; }
+        [Required]
+        public string NameID { get; init; }
 
+        public LocalizedString? Name { get; set; }
+
+        [Required]
         public int TimeSpend { get; init; }
 
-        public List<RecipeInput> Inputs { get; init; }
+        public IList<RecipeInput> Inputs { get; init; }
 
-        public List<RecipeOutput> Outputs { get; init; }
+        public IList<RecipeOutput> Outputs { get; init; }
 
-        public string IconPath { get; init; }
-
-        public int GridIndex { get; init; }
-
-        public string Description { get; init; }
-
-        public Recipe(int iD, string name, int timeSpend, List<RecipeInput> inputs, List<RecipeOutput> outputs, string iconPath, int gridIndex, string description)
+        public Recipe(int iD, LocalizedString name, int timeSpend, IList<RecipeInput> inputs, IList<RecipeOutput> outputs)
         {
             ID = iD;
+            NameID = name.Name;
             Name = name;
             TimeSpend = timeSpend;
             Inputs = inputs;
             Outputs = outputs;
-            IconPath = iconPath;
-            GridIndex = gridIndex;
-            Description = description;
         }
 
-        public Recipe(int iD, string name, int timeSpend, string iconPath, int gridIndex, string description):
-            this(iD, name, timeSpend, new List<RecipeInput>(), new List<RecipeOutput>(), iconPath, gridIndex, description)
+        public Recipe(int iD, string nameID, int timeSpend)
         {
-
+            ID = iD;
+            NameID = nameID;
+            TimeSpend = timeSpend;
+            Inputs = new List<RecipeInput>();
+            Outputs = new List<RecipeOutput>();
         }
     }
 }

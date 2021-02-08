@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DSPLogistics.Common;
+﻿using DSPLogistics.Common;
 using DSPLogistics.Common.Resources;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.IO;
 
 namespace DSPLogistics.Win.ConsoleApp
 {
     class Program
     {
         static readonly string DBPath =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DSPLogistics", "DSPLogisticsDb.sqlite");
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DSPLogistics", "DSPLogisticsDb.sqlite");
 
         static void Main(string[] args)
         {
@@ -41,7 +37,15 @@ namespace DSPLogistics.Win.ConsoleApp
             }
             using(dSPLogisticsDb)
             {
-
+                var items = dSPLogisticsDb
+                    .Items
+                    .Include(x => x.Name)
+                    .Include(x => x.Description);
+                var recipe = dSPLogisticsDb
+                    .Recipes
+                    .Include(x => x.Name)
+                    .Include(x => x.Inputs)
+                    .Include(x => x.Outputs);
                 dSPLogisticsDb.Database.EnsureDeleted();
             }
         }
