@@ -14,6 +14,10 @@ namespace DSPLogistics.Common.Resources.DSPObjectModel
 
 		public string ProduceFrom { get; set; } = "";
 
+		public int Grade { get; set; }
+
+		public int[] Upgrades { get; set; } = Array.Empty<int>();
+
 		public int StackSize { get; set; }
 
 		public bool IsFluid { get; set; }

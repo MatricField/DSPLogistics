@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 namespace DSPLogistics.Common.Model
 {
     [Index(nameof(Name))]
+    [DebuggerDisplay("{"+nameof(Localized)+"}")]
     public class LocalizedString
     {
         [Key, Required, DatabaseGenerated(DatabaseGeneratedOption.None)]

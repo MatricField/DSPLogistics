@@ -3,7 +3,9 @@ using DSPLogistics.Common.Resources;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace DSPLogistics.Win.ConsoleApp
 {
@@ -14,10 +16,28 @@ namespace DSPLogistics.Win.ConsoleApp
         static readonly string DBPath =
             Path.Combine(AppDataPath, "DSPLogisticsDb.sqlite");
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
+        {
+
+            using(var dSPLogisticsDb = await LoadGameDatabase())
+            {
+                var items = dSPLogisticsDb
+                    .Items
+                    .Include(x => x.Name)
+                    .Include(x => x.Description);
+
+                var recipe = dSPLogisticsDb
+                    .Recipes
+                    .Include(x => x.Name)
+                    .Include(x => x.Inputs)
+                    .Include(x => x.Outputs);
+            }
+        }
+
+        static async Task<DSPLogisticsDbContext> LoadGameDatabase()
         {
             DSPLogisticsDbContext dSPLogisticsDb;
-            if(File.Exists(DBPath))
+            if (File.Exists(DBPath))
             {
                 var connectionString = new SqliteConnectionStringBuilder()
                 {
@@ -25,6 +45,7 @@ namespace DSPLogistics.Win.ConsoleApp
                     DataSource = DBPath
                 }.ToString();
                 dSPLogisticsDb = new DSPLogisticsDbContext(connectionString);
+                // TODO: handle migration later
             }
             else
             {
@@ -35,24 +56,13 @@ namespace DSPLogistics.Win.ConsoleApp
                     DataSource = DBPath
                 }.ToString();
                 dSPLogisticsDb = new DSPLogisticsDbContext(connectionString);
-                LoadGameData(dSPLogisticsDb);
+                await dSPLogisticsDb.Database.EnsureCreatedAsync();
+                await LoadGameData(dSPLogisticsDb);
             }
-            using(dSPLogisticsDb)
-            {
-                var items = dSPLogisticsDb
-                    .Items
-                    .Include(x => x.Name)
-                    .Include(x => x.Description);
-                var recipe = dSPLogisticsDb
-                    .Recipes
-                    .Include(x => x.Name)
-                    .Include(x => x.Inputs)
-                    .Include(x => x.Outputs);
-                dSPLogisticsDb.Database.EnsureDeleted();
-            }
+            return dSPLogisticsDb;
         }
 
-        static void LoadGameData(DSPLogisticsDbContext dspLogisticsDb)
+        static async Task LoadGameData(DSPLogisticsDbContext dspLogisticsDb)
         {
             try
             {
@@ -65,7 +75,7 @@ namespace DSPLogistics.Win.ConsoleApp
                 else
                 {
                     var gameDb = GameDataBase.Load(gameLocation);
-                    gameDb.SaveTo(dspLogisticsDb);
+                    await gameDb.SaveTo(dspLogisticsDb);
                 }
             }
             catch(Exception)

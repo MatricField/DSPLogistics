@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using uTinyRipper;
 using uTinyRipper.Classes;
 using uTinyRipper.Game.Assembly;
@@ -41,56 +42,56 @@ namespace DSPLogistics.Common.Resources
             where T : Proto
         {
             var protoSetName = typeof(T).Name + "Set";
-            var protoSet = assets.Where(obj => obj.Name == protoSetName).Single();
+            var protoSet = assets.Single(obj => obj.Name == protoSetName);
             var itemList = MapProperties<ProtoSet<T>>(protoSet.Structure);
             return itemList.dataArray;
         }
 
-        public void SaveTo(DSPLogisticsDbContext logisticsDb)
+        public async Task SaveTo(DSPLogisticsDbContext logisticsDb)
         {
             foreach(var strProto in StringSet)
             {
-                logisticsDb.LocalizedStrings.Add(new LocalizedString(strProto.Name, strProto.ZHCN, strProto.ENUS, strProto.FRFR));
+                await logisticsDb.LocalizedStrings.AddAsync(new LocalizedString(strProto.Name, strProto.ZHCN, strProto.ENUS, strProto.FRFR));
             }
 
-            logisticsDb.SaveChanges();
+            await logisticsDb.SaveChangesAsync();
 
             foreach (var itemProto in ItemSet)
             {
-                logisticsDb.Add(
+                await logisticsDb.AddAsync(
                     new Item(
                         itemProto.ID,
-                        logisticsDb.LocalizedStrings.Where(x => x.Name == itemProto.Name).Single(),
+                        logisticsDb.LocalizedStrings.Single(x => x.Name == itemProto.Name),
                         itemProto.IconPath,
                         itemProto.GridIndex,
-                        logisticsDb.LocalizedStrings.Where(x => x.Name == itemProto.Description).Single()));
+                        logisticsDb.LocalizedStrings.Single(x => x.Name == itemProto.Description)));
             }
 
-            logisticsDb.SaveChanges();
+            await logisticsDb.SaveChangesAsync();
 
             foreach (var recipeProto in RecipeSet)
             {
                 var inputs =
                     Enumerable
                     .Zip(recipeProto.Items, recipeProto.ItemCounts)
-                    .Select(input => new RecipeInput(logisticsDb.Items.Where(x => x.ID == input.First).Single(), input.Second))
+                    .Select(input => new RecipeInput(logisticsDb.Items.Single(x => x.ID == input.First), input.Second))
                     .ToList();
 
                 var outputs =
                     Enumerable
                     .Zip(recipeProto.Results, recipeProto.ResultCounts)
-                    .Select(input => new RecipeOutput(logisticsDb.Items.Where(x => x.ID == input.First).Single(), input.Second))
+                    .Select(input => new RecipeOutput(logisticsDb.Items.Single(x => x.ID == input.First), input.Second))
                     .ToList();
 
-                logisticsDb.Add(
+                await logisticsDb.AddAsync(
                     new Recipe(
                         recipeProto.ID,
-                        logisticsDb.LocalizedStrings.Where(x => x.Name == recipeProto.Name).Single(),
+                        logisticsDb.LocalizedStrings.Single(x => x.Name == recipeProto.Name),
                         recipeProto.TimeSpend,
                         inputs, 
                         outputs));
             }
-            logisticsDb.SaveChanges();
+            await logisticsDb.SaveChangesAsync();
 
         }
 
